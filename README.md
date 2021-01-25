@@ -2,7 +2,7 @@
 ![Test](https://github.com/BillyDM/expanding_slice_rb/workflows/Test/badge.svg)
 [![Documentation](https://docs.rs/expanding_slice_rb/badge.svg)][documentation]
 [![Crates.io](https://img.shields.io/crates/v/expanding_slice_rb.svg)](https://crates.io/crates/expanding_slice_rb)
-[![License](https://img.shields.io/crates/l/expanding_slice_rb.svg)](https://github.com/BillyDM/expanding_slice_rb/blob/master/LICENSE)
+[![License](https://img.shields.io/crates/l/expanding_slice_rb.svg)](https://github.com/BillyDM/expanding_slice_rb/blob/main/LICENSE)
 
 A self-expanding ring buffer optimized for working with slices of data. Copies/reads with slices are implemented with memcpy. This algorithm attempts to use as little memcpys and allocations as possible, and only potentially shuffles data around when the capacity of the buffer is increased.
 

@@ -3,8 +3,15 @@ name = "expanding_slice_rb"
 version = "0.1.0"
 authors = ["Billy Messenger <BillyDM@protonmail.com>"]
 edition = "2018"
+license = "MIT"
+keywords = ["ring", "circular", "buffer", "dsp", "slice"]
+categories = ["data-structures"]
+description = "A self-expanding ring buffer optimized for working with slices of data"
+repository = "https://github.com/BillyDM/expanding_slice_rb"
+documentation = "https://docs.rs/expanding_slice_rb"
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-slice_ring_buf = "0.2.6"
+slice_ring_buf = "0.2"

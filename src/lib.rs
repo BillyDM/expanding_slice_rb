@@ -92,7 +92,7 @@ use slice_ring_buf::SliceRB;
 /// //
 /// // This is streaming, meaning the copied data will be cleared from the buffer for reuse, and
 /// // the next call to `read_into()` will start copying from where the previous call left off.
-/// // If you don't want this behavior, use the `peek_into()` method.
+/// // If you don't want this behavior, use the `peek_into()` method instead.
 /// let mut read_slice = [5u32; 4];
 /// let mut amount_written = buf.read_into(&mut read_slice);
 /// assert_eq!(amount_written, 4);
@@ -115,6 +115,8 @@ impl<T: Default + Copy> ExpSliceRB<T> {
     ///
     /// If possible, it is a good idea to set `capacity` to the largest you expect the
     /// buffer to get to avoid future memory allocations.
+    ///
+    /// This allocates new memory and is ***not*** real-time safe.
     ///
     /// # Example
     /// ```rust
@@ -147,7 +149,9 @@ impl<T: Default + Copy> ExpSliceRB<T> {
     ///
     /// This is streaming, meaning the copied data will be cleared from the buffer for reuse, and
     /// the next call to `read_into()` will start copying from where the previous call left off.
-    /// If you don't want this behavior, use the `peek_into()` method.
+    /// If you don't want this behavior, use the `peek_into()` method instead.
+    ///
+    /// This does not allocate any memory and is real-time safe.
     ///
     /// ## Returns
     /// This returns the total amount of data that was copied into `slice`.
@@ -212,13 +216,7 @@ impl<T: Default + Copy> ExpSliceRB<T> {
     /// As apposed to `read_into()`, this method is ***not*** streaming and does not effect the
     /// length of existing data in the buffer.
     ///
-    /// Reads the next chunk of existing data into the given slice. If the length of existing
-    /// data in the buffer is less than the length of the slice, then only that amount of data
-    /// will be copied into the front of the slice.
-    ///
-    /// This is streaming, meaning the copied data will be cleared from the buffer for reuse, and
-    /// the next call to `read_into()` will start copying from where the previous call left off.
-    /// If you don't want this behavior, take a look at `peek_into()`.
+    /// This does not allocate any memory and is real-time safe.
     ///
     /// ## Returns
     /// This returns the total amount of data that was copied into `slice`.
@@ -270,6 +268,8 @@ impl<T: Default + Copy> ExpSliceRB<T> {
     /// Append additional data into the buffer to be read later. More memory may be allocated
     /// if the buffer is not large enough.
     ///
+    /// This may allocate new memory and is ***not*** real-time safe.
+    ///
     /// # Example
     /// ```rust
     /// use expanding_slice_rb::ExpSliceRB;
@@ -308,11 +308,45 @@ impl<T: Default + Copy> ExpSliceRB<T> {
         self.data_len = new_len;
     }
 
+    /// Append additional data into the buffer to be read later. If the data cannot fit
+    /// into the buffer, then no data is copied and and error is returned.
+    ///
+    /// This does not allocate any memory and is real-time safe.
+    ///
+    /// # Example
+    /// ```rust
+    /// use expanding_slice_rb::ExpSliceRB;
+    ///
+    /// let mut buf = ExpSliceRB::<u32>::with_capacity(6);
+    ///
+    /// let data = [0u32, 1, 2];
+    ///
+    /// assert_eq!(buf.try_write(&data), Ok(()));
+    /// assert_eq!(buf.try_write(&data), Ok(()));
+    /// assert_eq!(buf.try_write(&data), Err(()));
+    /// ```
+    pub fn try_write(&mut self, slice: &[T]) -> Result<(), ()> {
+        let new_len = self.data_len + slice.len();
+
+        if new_len > self.buffer.len() {
+            return Err(());
+        }
+
+        // Write the data into the buffer.
+        self.buffer.write_latest(slice, self.index + self.data_len as isize);
+
+        self.data_len = new_len;
+
+        Ok(())
+    }
+
     /// Reserves capacity for at least `additional` more elements to be inserted
     /// into the buffer.
     ///
     /// Due to the algorithm, no data will actually be initialized. However, more memory
     /// may need to be allocated.
+    ///
+    /// This may allocate new memory and is ***not*** real-time safe.
     ///
     /// # Panics
     ///
@@ -352,6 +386,8 @@ impl<T: Default + Copy> ExpSliceRB<T> {
 
     /// Removes all existing data in the buffer.
     ///
+    /// This does not allocate any memory and is real-time safe.
+    ///
     /// Due to the algorithm, no data will actually be initialized.
     pub fn clear(&mut self) {
         self.index = 0;
@@ -362,6 +398,8 @@ impl<T: Default + Copy> ExpSliceRB<T> {
     /// `Vec::shrink_to_fit()` on the internal Vec.
     ///
     /// Due to the algorithm, no data will actually be initialized.
+    ///
+    /// This may allocate or deallocate memory and is ***not*** real-time safe.
     pub fn clear_and_shrink_to_capacity(&mut self, capacity: usize) {
         self.clear();
 

@@ -45,7 +45,7 @@ assert_eq!(buf.capacity(), 6);
 // This is streaming, meaning the copied data will be cleared from the buffer for
 // reuse, and the next call to `read_into()` will start copying from where the
 // previous call left off. If you don't want this behavior, use the `peek_into()`
-// method.
+// method instead.
 let mut read_slice = [5u32; 4];
 let mut amount_written = buf.read_into(&mut read_slice);
 assert_eq!(amount_written, 4);

@@ -15,7 +15,7 @@ Add `expanding_slice_rb` as a dependency in your `Cargo.toml`:
 ```toml
 expanding_slice_rb = 0.1
 ```
-
+2
 ## Example
 ```rust
 use expanding_slice_rb::ExpSliceRB;

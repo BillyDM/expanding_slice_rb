@@ -428,6 +428,8 @@ impl<T: Default + Copy> ExpSliceRB<T> {
     }
 
     /// Returns the amount of unused data available in the buffer.
+    ///
+    /// This can be useful in conjunction with the `try_write()` method.
     pub fn data_left(&self) -> usize {
         self.buffer.len() - self.data_len
     }

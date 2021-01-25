@@ -57,3 +57,5 @@ amount_written = buf.read_into(&mut large_read_slice);
 assert_eq!(amount_written, 5);
 assert_eq!(large_read_slice, [1u32, 2, 0, 1, 2, 5, 5, 5]);
 ```
+
+[documentation]: https://docs.rs/expanding_slice_rb/

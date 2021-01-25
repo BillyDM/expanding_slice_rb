@@ -422,10 +422,14 @@ impl<T: Default + Copy> ExpSliceRB<T> {
         self.buffer.capacity()
     }
 
-
     /// Returns the length of existing data in the buffer. This is ***not*** the same as the allocated capacity of the buffer.
     pub fn len(&self) -> usize {
         self.data_len
+    }
+
+    /// Returns the amount of unused data available in the buffer.
+    pub fn data_left(&self) -> usize {
+        self.buffer.len() - self.data_len
     }
 
     /// Return `true` if the buffer has no existing data, `false` otherwise.

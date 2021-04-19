@@ -4,9 +4,9 @@
 [![Crates.io](https://img.shields.io/crates/v/expanding_slice_rb.svg)](https://crates.io/crates/expanding_slice_rb)
 [![License](https://img.shields.io/crates/l/expanding_slice_rb.svg)](https://github.com/BillyDM/expanding_slice_rb/blob/main/LICENSE)
 
-A self-expanding ring buffer optimized for working with slices of data. Copies/reads with slices are implemented with memcpy. This algorithm attempts to use as little memcpys and allocations as possible, and only potentially shuffles data around when the capacity of the buffer is increased.
+A self-expanding ring buffer optimized for working with slices of data. This functions similarly to [`VecDeque`], but with handy methods for efficiently working with slices of data. This can be especially useful when working with streams of data where the input and output buffers are different sizes.
 
-This crate is especially useful when working with streams of data where the inputs and outputs use different sizes of buffers.
+Copies/reads with slices are implemented with memcpy. This algorithm attempts to use as little memcpys and allocations as possible, and only potentially shuffles data around when the capacity of the buffer is increased.
 
 This buffer does not contain any Producer/Consumer logic, but it could be used as a building block for a ring buffer that does.
 
@@ -59,3 +59,4 @@ assert_eq!(large_read_slice, [1u32, 2, 0, 1, 2, 5, 5, 5]);
 ```
 
 [documentation]: https://docs.rs/expanding_slice_rb/
+[`VecDeque`]: https://doc.rust-lang.org/std/collections/struct.VecDeque.html

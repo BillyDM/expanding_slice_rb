@@ -1,13 +1,14 @@
-//! A self-expanding ring buffer optimized for working with slices of data. Copies/reads with
-//! slices are implemented with memcpy. This algorithm attempts to use as little memcpys and
-//! allocations as possible, and only potentially shuffles data around when the capacity of the
-//! buffer is increased.
+//! A self-expanding ring buffer optimized for working with slices of data. This functions
+//! similarly to [`VecDeque`], but with handy methods for efficiently working with slices of
+//! data. This can be especially useful when working with streams of data where the input and
+//! output buffers are different sizes.
 //! 
-//! This crate is especially useful when working with streams of data where the inputs and outputs
-//! use different sizes of buffers.
+//! Copies/reads with slices are implemented with memcpy. This algorithm attempts to use as
+//! little memcpys and allocations as possible, and only potentially shuffles data around when
+//! the capacity of the buffer is increased.
 //! 
-//! This buffer cannot be shared across threads, but it could be used as a building block for a
-//! ring buffer that does.
+//! This buffer does not contain any Producer/Consumer logic, but it could be used as a building
+//! block for a ring buffer that does.
 //! 
 //! ## Installation
 //! Add `expanding_slice_rb` as a dependency in your `Cargo.toml`:
@@ -55,14 +56,22 @@
 //! assert_eq!(amount_written, 5);
 //! assert_eq!(large_read_slice, [1u32, 2, 0, 1, 2, 5, 5, 5]);
 //! ```
+//!
+//! [`VecDeque`]: https://doc.rust-lang.org/std/collections/struct.VecDeque.html
 
 use slice_ring_buf::SliceRB;
 
-/// A self-expanding ring buffer optimized for working with slices of data. Copies/reads
-/// with slices are implemented with memcpy.
-///
-/// This struct is especially useful when working with streams of data where the inputs and
-/// outputs use different sizes of buffers.
+/// A self-expanding ring buffer optimized for working with slices of data. This functions
+/// similarly to [`VecDeque`], but with handy methods for efficiently working with slices of
+/// data. This can be especially useful when working with streams of data where the input and
+/// output buffers are different sizes.
+/// 
+/// Copies/reads with slices are implemented with memcpy. This algorithm attempts to use as
+/// little memcpys and allocations as possible, and only potentially shuffles data around when
+/// the capacity of the buffer is increased.
+/// 
+/// This buffer does not contain any Producer/Consumer logic, but it could be used as a building
+/// block for a ring buffer that does.
 ///
 /// ## Example
 /// ```rust
@@ -104,6 +113,8 @@ use slice_ring_buf::SliceRB;
 /// assert_eq!(amount_written, 5);
 /// assert_eq!(large_read_slice, [1u32, 2, 0, 1, 2, 5, 5, 5]);
 /// ```
+///
+/// [`VecDeque`]: https://doc.rust-lang.org/std/collections/struct.VecDeque.html
 pub struct ExpSliceRB<T: Default + Copy> {
     buffer: SliceRB<T>,
     index: isize,

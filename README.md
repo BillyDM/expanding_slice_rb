@@ -8,7 +8,7 @@ A self-expanding ring buffer optimized for working with slices of data. Copies/r
 
 This crate is especially useful when working with streams of data where the inputs and outputs use different sizes of buffers.
 
-This buffer cannot be shared across threads, but it could be used as a building block for a ring buffer that does.
+This buffer does not contain any Producer/Consumer logic, but it could be used as a building block for a ring buffer that does.
 
 ## Installation
 Add `expanding_slice_rb` as a dependency in your `Cargo.toml`:

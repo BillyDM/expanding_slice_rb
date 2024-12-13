@@ -158,6 +158,10 @@ impl<T: Default + Clone + Copy> ExpSliceRB<T> {
     /// assert_eq!(buf.capacity().get(), 128);
     /// ```
     ///
+    /// # Panics
+    ///
+    /// * This will panic if `capacity > isize::MAX`.
+    /// * This will panic if allocation fails due to being out of memory.
     /// [`ExpSliceRB`]: struct.ExpSliceRB.html
     pub fn with_capacity(capacity: NonZeroUsize) -> Self {
         // Safe because our algorithm ensures data will always be written to
@@ -321,7 +325,8 @@ impl<T: Default + Clone + Copy> ExpSliceRB<T> {
     ///
     /// # Panics
     ///
-    /// * Panics if any newly allocated capacity overflows `usize`.
+    /// * This will panic if `capacity > isize::MAX`.
+    /// * This will panic if allocation fails due to being out of memory.
     pub fn write(&mut self, slice: &[T]) {
         let new_len = self.data_len + slice.len();
 
@@ -380,7 +385,8 @@ impl<T: Default + Clone + Copy> ExpSliceRB<T> {
     ///
     /// # Panics
     ///
-    /// * Panics if the new capacity overflows `usize`.
+    /// * This will panic if `capacity > isize::MAX`.
+    /// * This will panic if allocation fails due to being out of memory.
     pub fn reserve(&mut self, additional: usize) {
         if additional == 0 {
             return;
@@ -435,6 +441,11 @@ impl<T: Default + Clone + Copy> ExpSliceRB<T> {
     /// Due to the algorithm, no data will actually be initialized.
     ///
     /// This may allocate or deallocate memory and is ***not*** real-time safe.
+    ///
+    /// # Panics
+    ///
+    /// * This will panic if `capacity > isize::MAX`.
+    /// * This will panic if allocation fails due to being out of memory.
     pub fn clear_and_shrink_to_capacity(&mut self, capacity: NonZeroUsize) {
         self.clear();
 

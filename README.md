@@ -10,42 +10,37 @@ Copies/reads with slices are implemented with memcpy. This algorithm attempts to
 
 This buffer does not contain any Producer/Consumer logic, but it could be used as a building block for a ring buffer that does.
 
-## Installation
-Add `expanding_slice_rb` as a dependency in your `Cargo.toml`:
-```toml
-expanding_slice_rb = 0.1
-```
+This crate can also be used without the standard library (`#![no_std]`).
 
 ## Example
+
 ```rust
+use core::num::NonZeroUsize;
 use expanding_slice_rb::ExpSliceRB;
 
 // Create a ring buffer with type u32. There is no data in the buffer to start.
 //
 // If possible, it is a good idea to set `capacity` to the largest you expect the
 // buffer to get to avoid future memory allocations.
-let mut buf = ExpSliceRB::<u32>::with_capacity(3);
-
+let mut buf = ExpSliceRB::<u32>::with_capacity(NonZeroUsize::new(3).unwrap());
 let data = [0u32, 1, 2];
 
 // Memcpy data from a slice into the ring buffer. The buffer will automatically
 // expand to fill new data.
 buf.write(&data);
 assert_eq!(buf.len(), 3);
-assert_eq!(buf.capacity(), 3);
-
+assert_eq!(buf.capacity().get(), 3);
 buf.write(&data);
 assert_eq!(buf.len(), 6);
-assert_eq!(buf.capacity(), 6);
+assert_eq!(buf.capacity().get(), 6);
 
 // Memcpy the next chunk of data into the read slice. If the length of existing
 // data in the buffer is less than the length of the slice, then only that amount
 // of data will be copied into the front of the slice.
 //
-// This is streaming, meaning the copied data will be cleared from the buffer for
-// reuse, and the next call to `read_into()` will start copying from where the
-// previous call left off. If you don't want this behavior, use the `peek_into()`
-// method instead.
+// This is streaming, meaning the copied data will be cleared from the buffer for reuse, and
+// the next call to `read_into()` will start copying from where the previous call left off.
+// If you don't want this behavior, use the `peek_into()` method.
 let mut read_slice = [5u32; 4];
 let mut amount_written = buf.read_into(&mut read_slice);
 assert_eq!(amount_written, 4);

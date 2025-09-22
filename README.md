@@ -4,6 +4,8 @@
 [![Crates.io](https://img.shields.io/crates/v/expanding_slice_rb.svg)](https://crates.io/crates/expanding_slice_rb)
 [![License](https://img.shields.io/crates/l/expanding_slice_rb.svg)](https://github.com/BillyDM/expanding_slice_rb/blob/main/LICENSE)
 
+> This project has moved to [Codeberg](https://codeberg.org/BillyDM/expanding_slice_rb).
+
 A self-expanding ring buffer optimized for working with slices of data. This functions similarly to [`VecDeque`], but with handy methods for efficiently working with slices of data. This can be especially useful when working with streams of data where the input and output buffers are different sizes.
 
 Copies/reads with slices are implemented with memcpy. This algorithm attempts to use as little memcpys and allocations as possible, and only potentially shuffles data around when the capacity of the buffer is increased.
